@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/lib/cart-context";
-import { Product, products, Review } from "@/lib/mock-data";
+import { getProducts, Product, Review } from "@/lib/mock-data";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -13,36 +13,42 @@ export function ProductDetails({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState("M");
   const [activeImage, setActiveImage] = useState(product.image);
   const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
 
   // Use product images if available, otherwise just the main image
   const gallery = product.images || [product.image];
 
-  const relatedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
-
   useEffect(() => {
-    // 1. Track current view
-    const raw = localStorage.getItem("recently-viewed");
-    let viewed = raw ? JSON.parse(raw) : [];
-    
-    viewed = viewed.filter((h: string) => h !== product.handle);
-    viewed.unshift(product.handle);
-    
-    const limited = viewed.slice(0, 10);
-    localStorage.setItem("recently-viewed", JSON.stringify(limited));
+    // 1. Fetch Related and Recently Viewed from API
+    getProducts().then(allProducts => {
+        // Related
+        const related = allProducts
+            .filter(p => p.category === product.category && p.id !== product.id)
+            .slice(0, 4);
+        setRelatedProducts(related);
 
-    // 2. Load other recently viewed
-    const displayList = limited
-      .filter((h: string) => h !== product.handle)
-      .map((h: string) => products.find(p => p.handle === h))
-      .filter(Boolean)
-      .slice(0, 4) as Product[];
-    
-    setRecentlyViewed(displayList);
+        // Recently Viewed logic
+        const raw = localStorage.getItem("recently-viewed");
+        let viewedHandles = raw ? JSON.parse(raw) : [];
+        
+        viewedHandles = viewedHandles.filter((h: string) => h !== product.handle);
+        viewedHandles.unshift(product.handle);
+        
+        const limited = viewedHandles.slice(0, 10);
+        localStorage.setItem("recently-viewed", JSON.stringify(limited));
+
+        const displayList = limited
+          .filter((h: string) => h !== product.handle)
+          .map((h: string) => allProducts.find(p => p.handle === h))
+          .filter(Boolean)
+          .slice(0, 4) as Product[];
+        
+        setRecentlyViewed(displayList);
+    });
+
     // Reset active image when product changes
     setActiveImage(product.image);
-  }, [product.handle, product.image]);
+  }, [product.handle, product.image, product.category, product.id]);
 
   const averageRating = product.reviews 
     ? (product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length).toFixed(1)

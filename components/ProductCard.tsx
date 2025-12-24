@@ -71,6 +71,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
            <button 
              onClick={handleQuickAdd}
              className="w-full bg-white text-secondary py-3 font-bold text-[9px] uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all shadow-xl active:scale-[0.98]"
+             aria-label={`Quick add ${product.title} to cart`}
            >
              Quick Add — M
            </button>
@@ -78,6 +79,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
              <button 
                onClick={handleQuickViewInternal}
                className="w-full bg-black/80 backdrop-blur-md text-white py-3 font-bold text-[9px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl active:scale-[0.98]"
+               aria-label={`Quick view ${product.title}`}
              >
                Quick View
              </button>

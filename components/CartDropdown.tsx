@@ -3,9 +3,11 @@
 import { useCart } from "@/lib/cart-context";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 export function CartDropdown() {
+  const router = useRouter();
   const { items, isOpen, setIsOpen, removeItem, subtotal } = useCart();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -29,7 +31,7 @@ export function CartDropdown() {
   return (
     <div 
       ref={dropdownRef}
-      className="absolute top-16 right-4 w-96 bg-white shadow-2xl rounded-lg overflow-hidden border border-gray-100 z-50 animate-in fade-in slide-in-from-top-2 duration-200"
+      className="absolute top-20 right-0 sm:right-4 w-[calc(100vw-2rem)] sm:w-96 bg-white shadow-2xl rounded-lg overflow-hidden border border-gray-100 z-50 animate-in fade-in slide-in-from-top-2 duration-200 mx-4 sm:mx-0"
     >
       <div className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
         <h3 className="font-semibold text-secondary">Shopping Cart</h3>
@@ -110,9 +112,9 @@ export function CartDropdown() {
         <Link 
           href="/cart" 
           onClick={() => setIsOpen(false)}
-          className="block w-full bg-black text-white text-center py-3 rounded-md font-medium hover:bg-gray-900 transition-colors"
+          className="block w-full bg-black text-white text-center py-4 rounded-full font-bold uppercase tracking-[0.2em] shadow-xl hover:bg-zinc-800 transition-all transform active:scale-[0.98]"
         >
-          View Cart & Checkout
+          Checkout
         </Link>
       </div>
     </div>

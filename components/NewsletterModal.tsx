@@ -78,18 +78,22 @@ export function NewsletterModal() {
                     </p>
 
                     <form className="w-full space-y-4" onSubmit={handleSubmit}>
-                        <div className="relative">
+                        <div className="relative text-left">
+                            <label htmlFor="modal-email" className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1 block">Email Address</label>
                             <input 
+                                id="modal-email"
                                 type="email" 
                                 placeholder="your@email.com" 
                                 className="w-full border border-gray-200 p-4 outline-none focus:border-black transition-colors text-center font-medium"
                                 required
+                                aria-required="true"
                             />
                         </div>
                         
                         <button 
                             type="submit"
                             className="w-full bg-accent text-white py-4 font-bold uppercase tracking-[0.2em] hover:opacity-90 transition-opacity active:scale-[0.98]"
+                            aria-label="Subscribe to newsletter"
                         >
                             Keep Me Updated
                         </button>

@@ -3,9 +3,11 @@
 import { useCart } from "@/lib/cart-context";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CartPage() {
+  const router = useRouter();
   const { items, removeItem, updateQuantity, subtotal } = useCart();
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState(false);
@@ -26,45 +28,45 @@ export default function CartPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
       <h1 className="text-3xl md:text-4xl font-bold text-secondary mb-12">Shopping Cart</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12">
         {/* Cart Items */}
-        <div className="lg:col-span-8 space-y-8">
+        <div className="lg:col-span-8 space-y-6 md:space-y-8">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-6 py-6 border-b border-gray-100 last:border-0">
-              <div className="relative w-24 h-32 md:w-32 md:h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+            <div key={item.id} className="flex flex-col xs:flex-row gap-4 xs:gap-6 py-6 border-b border-gray-100 last:border-0 relative">
+              <div className="relative w-full xs:w-24 xs:h-32 md:w-32 md:h-40 aspect-[3/4] xs:aspect-auto bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                 <Image src={item.product.image} alt={item.product.title} fill className="object-cover" />
               </div>
               
               <div className="flex-1 flex flex-col justify-between">
                 <div>
                   <div className="flex justify-between items-start gap-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-secondary">{item.product.title}</h3>
-                      <div className="flex gap-2 items-center mt-1">
-                        <p className="text-gray-500 text-sm">{item.product.category}</p>
+                    <div className="flex-1">
+                      <h3 className="text-base md:text-lg font-bold text-secondary leading-tight">{item.product.title}</h3>
+                      <div className="flex flex-wrap gap-2 items-center mt-1.5">
+                        <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">{item.product.category}</p>
                         {item.size && (
-                          <span className="text-sm font-bold bg-gray-100 px-1.5 py-0.5 rounded text-secondary">Size: {item.size}</span>
+                          <span className="text-[10px] font-black bg-gray-100 px-2 py-0.5 rounded text-secondary uppercase tracking-widest border border-black/5">Size: {item.size}</span>
                         )}
                       </div>
                     </div>
-                    <p className="font-semibold text-lg text-secondary">${(item.product.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-base md:text-lg font-bold text-secondary">${(item.product.price * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-end">
-                  <div className="flex items-center space-x-2">
-                     <span className="text-sm text-gray-500 font-medium">Quantity:</span>
-                     <div className="flex items-center border border-gray-200 rounded-full">
+                <div className="flex justify-between items-center mt-6">
+                  <div className="flex items-center space-x-3">
+                     <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest hidden sm:block">Quantity:</span>
+                     <div className="flex items-center border border-black/5 bg-gray-50 rounded-full h-10 px-1">
                        <button 
                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                         className="px-3 py-1 hover:bg-gray-50 text-secondary"
+                         className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition-colors font-bold text-secondary"
                        >
                          −
                        </button>
-                       <span className="px-2 text-sm font-bold text-secondary min-w-[20px] text-center">{item.quantity}</span>
+                       <span className="px-3 text-xs font-black text-secondary min-w-[30px] text-center">{item.quantity}</span>
                        <button 
                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                         className="px-3 py-1 hover:bg-gray-50 text-secondary"
+                         className="w-8 h-8 flex items-center justify-center hover:bg-white rounded-full transition-colors font-bold text-secondary"
                        >
                          +
                        </button>
@@ -72,8 +74,9 @@ export default function CartPage() {
                   </div>
                   <button 
                     onClick={() => removeItem(item.id)}
-                    className="text-xs font-bold uppercase tracking-widest text-red-500 hover:text-red-700 underline underline-offset-4"
+                    className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1.5"
                   >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                     Remove
                   </button>
                 </div>
@@ -160,7 +163,10 @@ export default function CartPage() {
               </span>
             </div>
 
-            <button className="w-full bg-black text-white py-5 rounded-full font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl transform active:scale-[0.98]">
+            <button 
+              onClick={() => router.push('/checkout')}
+              className="block w-full text-center bg-black text-white py-5 rounded-full font-bold uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all shadow-xl hover:shadow-2xl transform active:scale-[0.98]"
+            >
               Checkout Now
             </button>
             <p className="text-[10px] text-gray-400 text-center mt-6 font-bold uppercase tracking-widest leading-relaxed">

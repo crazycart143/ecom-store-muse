@@ -2,7 +2,7 @@
 
 export function AnnouncementBar() {
   return (
-    <div className="bg-black text-white text-xs font-bold tracking-widest py-2 overflow-hidden relative z-[60] flex">
+    <div className="bg-black text-white text-xs font-bold tracking-widest py-2 overflow-hidden relative z-[60] flex w-full max-w-full">
       <div className="flex animate-marquee whitespace-nowrap shrink-0">
         <span className="mx-8">FREE SHIPPING ON ALL ORDERS OVER $150</span>
         <span className="mx-8">NEW COLLECTION DROPPING SOON</span>

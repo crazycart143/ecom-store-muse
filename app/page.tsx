@@ -1,21 +1,30 @@
 import { ProductCard } from "@/components/ProductCard";
 import Link from "next/link";
-import { products, collections } from "@/lib/mock-data";
+import { getProducts, collections } from "@/lib/mock-data";
 import { Marquee } from "@/components/Marquee";
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  const allProducts = await getProducts();
+  const featuredProducts = allProducts.slice(0, 4);
+
   return (
     <div className="bg-white">
-      {/* Hero Section */}
-      <section className="bg-secondary text-primary min-h-[80vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-40"></div>
+      {/* ... Hero Section unchanged ... */}
+      <section className="bg-secondary text-primary min-h-[90vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <Image 
+            src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=2000"
+            alt="Hero background"
+            fill
+            priority
+            className="object-cover opacity-40"
+        />
         <div className="relative z-10 max-w-4xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 animate-in slide-in-from-bottom-8 duration-700">
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-6 animate-in slide-in-from-bottom-8 duration-700">
             WINTER <br/> COLLECTION
           </h1>
-          <p className="max-w-xl mx-auto text-gray-200 text-xl mb-10 font-light">
-             Timeless essentials designed for the modern individual. <br/>Embrace the monochrome.
+          <p className="max-w-xl mx-auto text-gray-200 text-lg md:text-xl mb-10 font-light">
+             Timeless essentials designed for the modern individual. <br className="hidden sm:block"/>Embrace the monochrome.
           </p>
           <div className="flex gap-4 justify-center">
             <Link href="/shop" className="bg-white text-black px-10 py-4 rounded-full font-bold hover:bg-accent hover:text-white transition-all transform hover:scale-105">
@@ -32,13 +41,13 @@ export default function Home() {
 
       {/* Collections Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-         <div className="flex justify-between items-end mb-12">
-            <h2 className="text-4xl font-bold text-secondary tracking-tight">Curated Collections</h2>
-            <Link href="/shop" className="text-sm font-medium border-b border-black pb-1 hover:text-gray-600 transition-colors">View All Collections</Link>
+         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-secondary tracking-tight">Curated Collections</h2>
+            <Link href="/shop" className="text-xs font-bold uppercase tracking-widest border-b-2 border-black pb-1 hover:text-accent transition-colors">View All Collections</Link>
          </div>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {collections.map(collection => (
-              <Link key={collection.id} href="/shop" className="group block relative aspect-[4/5] overflow-hidden">
+              <Link key={collection.id} href={`/shop?collection=${collection.handle}`} className="group block relative aspect-[4/5] overflow-hidden">
                  <Image 
                    src={collection.image} 
                    alt={collection.title} 
@@ -57,7 +66,6 @@ export default function Home() {
 
       {/* Featured Products */}
       <section className="bg-gray-50 py-24">
-        {/* ... existing latest arrivals ... */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-secondary mb-4">Latest Arrivals</h2>
@@ -65,7 +73,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8">
-            {products.slice(0, 4).map((product) => (
+            {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -113,7 +121,13 @@ export default function Home() {
       {/* Promo Section */}
       <section className="py-24 px-4">
         <div className="max-w-7xl mx-auto bg-black text-white rounded-2xl overflow-hidden relative">
-           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-50 mix-blend-overlay"></div>
+           <Image 
+              src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=2000"
+              alt="Promo background"
+              fill
+              className="object-cover opacity-50 mix-blend-overlay"
+              loading="lazy"
+           />
            <div className="relative z-10 py-32 px-8 text-center">
               <span className="text-accent font-bold tracking-widest uppercase mb-4 block">Limited Time</span>
               <h2 className="text-5xl md:text-7xl font-black mb-8">END OF SEASON SALE</h2>

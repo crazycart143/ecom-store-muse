@@ -10,6 +10,8 @@ interface FlyingImageProps {
   onComplete: () => void;
 }
 
+import Image from "next/image";
+
 export function FlyingImage({ src, startRect, targetSelector, onComplete }: FlyingImageProps) {
   const [style, setStyle] = useState<React.CSSProperties>({
     position: 'fixed',
@@ -57,8 +59,15 @@ export function FlyingImage({ src, startRect, targetSelector, onComplete }: Flyi
 
   // Use portal to be safe against overflow:hidden parents
   return createPortal(
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt="" style={style} className="shadow-xl" />,
+    <div style={style} className="shadow-xl overflow-hidden">
+        <Image 
+            src={src} 
+            alt="Product animation" 
+            fill 
+            className="object-cover"
+            priority // Load fast for animation
+        />
+    </div>,
     document.body
   );
 }

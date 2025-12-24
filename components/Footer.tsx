@@ -8,12 +8,30 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             <h3 className="text-2xl font-bold tracking-tight">MUSE<span className="text-accent">.</span></h3>
             <p className="text-gray-400 text-sm">
               Premium essentials for the modern minimalist. 
               Designed with focus and precision.
             </p>
+            <div className="flex gap-4">
+               {[
+                 { name: 'TW', label: 'Twitter', href: '#' },
+                 { name: 'IG', label: 'Instagram', href: '#' },
+                 { name: 'FB', label: 'Facebook', href: '#' }
+               ].map(s => (
+                 <a 
+                   key={s.name} 
+                   href={s.href} 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   className="text-xs font-bold tracking-widest text-gray-500 hover:text-white transition-colors"
+                   aria-label={`Follow us on ${s.label}`}
+                 >
+                   {s.name}
+                 </a>
+               ))}
+            </div>
           </div>
 
           {/* Links 1 */}
@@ -56,13 +74,18 @@ export function Footer() {
                   }
                 }}
               >
+                <label htmlFor="footer-newsletter-email" className="sr-only">Email address for newsletter</label>
                 <input 
+                  id="footer-newsletter-email"
                   type="email" 
                   placeholder="Enter your email" 
                   className="bg-zinc-900 border border-zinc-800 text-white px-4 py-3 rounded-md w-full focus:outline-none focus:border-accent text-sm transition-all disabled:opacity-50"
                   required
                 />
-                <button className="bg-accent text-white px-6 py-3 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 shrink-0">
+                <button 
+                  className="bg-accent text-white px-6 py-3 rounded-md text-sm font-bold uppercase tracking-widest hover:opacity-90 transition-all active:scale-95 shrink-0"
+                  aria-label="Subscribe to newsletter"
+                >
                   Join
                 </button>
               </form>

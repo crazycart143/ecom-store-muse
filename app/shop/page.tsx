@@ -1,13 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { products } from "@/lib/mock-data";
+import { useEffect, useMemo, useState } from "react";
+import { getProducts, products, Product, collections } from "@/lib/mock-data";
 import { ProductCard } from "@/components/ProductCard";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { QuickViewModal } from "@/components/QuickViewModal";
-import { Product } from "@/lib/mock-data";
+import { useSearchParams } from "next/navigation";
 
-const CATEGORIES = ["All", "Tops", "Bottoms", "Outerwear", "Footwear", "Accessories"];
+const CATEGORIES = ["All", "Clothes", "Shoes", "Miscellaneous"]; 
+const CATEGORY_MAP: Record<string, number> = {
+    "Clothes": 1,
+    "Shoes": 4,
+    "Miscellaneous": 5
+};
+
 const SORT_OPTIONS = [
     { label: "Newest", value: "newest" },
     { label: "Price: Low to High", value: "price_asc" },
@@ -15,18 +21,50 @@ const SORT_OPTIONS = [
 ];
 
 export default function Shop() {
-   const [activeCategory, setActiveCategory] = useState("All");
+  const searchParams = useSearchParams();
+  const collectionHandle = searchParams.get("collection");
+  
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("All");
   const [sortValue, setSortValue] = useState("newest");
   const [priceRange, setPriceRange] = useState<{min: string, max: string}>({ min: "", max: "" });
   const [isFilterOpen, setIsFilterOpen] = useState(false); // Mobile filter toggle
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
 
-  const filteredProducts = useMemo(() => {
-    let result = products;
+  const activeCollection = useMemo(() => {
+    return collections.find(c => c.handle === collectionHandle);
+  }, [collectionHandle]);
 
-    // Category Filter
-    if (activeCategory !== "All") {
-      result = result.filter((product) => product.category === activeCategory);
+  useEffect(() => {
+    async function fetchData() {
+        setLoading(true);
+        if (activeCollection) {
+            const data = await getProducts(activeCollection.categoryId);
+            setAllProducts(data);
+        } else if (activeCategory !== "All") {
+            const data = await getProducts(CATEGORY_MAP[activeCategory]);
+            setAllProducts(data);
+        } else {
+            // "All" view - fetch multiple categories for variety
+            const [clothes, shoes, misc] = await Promise.all([
+                getProducts(1),
+                getProducts(4),
+                getProducts(5)
+            ]);
+            setAllProducts([...clothes, ...shoes, ...misc]);
+        }
+        setLoading(false);
+    }
+    fetchData();
+  }, [activeCollection, activeCategory]);
+
+  const filteredProducts = useMemo(() => {
+    let result = allProducts;
+
+    // Local filter (already handled by fetch for current setup, but kept for price/sort)
+    if (activeCategory !== "All" && !activeCollection) {
+        result = result.filter(p => p.category === activeCategory);
     }
 
     // Price Filter
@@ -50,13 +88,17 @@ export default function Shop() {
     }
 
     return result;
-  }, [activeCategory, sortValue, priceRange]);
+  }, [allProducts, activeCategory, sortValue, priceRange]);
 
   return (
     <div className="bg-white min-h-screen pb-24">
       <div className="bg-secondary text-primary py-16 px-4 text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">SHOP ALL</h1>
-        <p className="text-gray-300">Discover our full range of essentials.</p>
+        <h1 className="text-4xl font-bold tracking-tight mb-4 uppercase">
+            {activeCollection ? activeCollection.title : (activeCategory !== "All" ? activeCategory : "Shop All")}
+        </h1>
+        <p className="text-gray-300 max-w-2xl mx-auto">
+            {activeCollection ? activeCollection.description : "Discover our full range of essentials and timeless designs."}
+        </p>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -131,18 +173,32 @@ export default function Shop() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-8">
-                    {filteredProducts.map((product) => (
-                    <ProductCard 
-                        key={product.id} 
-                        product={product} 
-                        onQuickView={() => setQuickViewProduct(product)}
-                    />
-                    ))}
-                    {filteredProducts.length === 0 && (
-                        <div className="col-span-full text-center py-24 text-gray-400">
-                            No products match your filters.
-                        </div>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-y-12 gap-x-4 md:gap-x-8">
+                    {loading ? (
+                        Array(6).fill(0).map((_, i) => (
+                            <div key={i} className="space-y-4">
+                                <div className="aspect-[3/4] bg-gray-100 skeleton rounded-lg" />
+                                <div className="space-y-2">
+                                    <div className="h-4 bg-gray-100 skeleton w-2/3" />
+                                    <div className="h-3 bg-gray-100 skeleton w-1/4" />
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <>
+                            {filteredProducts.map((product) => (
+                            <ProductCard 
+                                key={product.id} 
+                                product={product} 
+                                onQuickView={() => setQuickViewProduct(product)}
+                            />
+                            ))}
+                            {filteredProducts.length === 0 && (
+                                <div className="col-span-full text-center py-24 text-gray-400">
+                                    No products match your filters.
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>
