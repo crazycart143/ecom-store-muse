@@ -37,6 +37,7 @@ import { Footer } from "@/components/Footer";
 import { CartProvider } from "@/lib/cart-context";
 import { NewsletterModal } from "@/components/NewsletterModal";
 import { BackToTop } from "@/components/BackToTop";
+import { CreatorBadge } from "@/components/CreatorBadge";
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ export default function RootLayout({
           <Header />
           <NewsletterModal />
           <BackToTop />
+          <CreatorBadge />
           <main className="pt-28 min-h-screen">
               {children}
           </main>
