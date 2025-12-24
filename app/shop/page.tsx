@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { getProducts, products, Product, collections } from "@/lib/mock-data";
 import { ProductCard } from "@/components/ProductCard";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -20,7 +20,7 @@ const SORT_OPTIONS = [
     { label: "Price: High to Low", value: "price_desc" },
 ];
 
-export default function Shop() {
+function ShopContent() {
   const searchParams = useSearchParams();
   const collectionHandle = searchParams.get("collection");
   
@@ -210,5 +210,18 @@ export default function Shop() {
         onClose={() => setQuickViewProduct(null)} 
       />
     </div>
+  );
+}
+
+export default function Shop() {
+  return (
+    <Suspense fallback={
+        <div className="max-w-7xl mx-auto px-4 py-24 text-center">
+            <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Loading Muse Catalog...</p>
+        </div>
+    }>
+        <ShopContent />
+    </Suspense>
   );
 }

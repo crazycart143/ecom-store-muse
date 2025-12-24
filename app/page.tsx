@@ -12,11 +12,12 @@ export default async function Home() {
     <div className="bg-white">
       {/* ... Hero Section unchanged ... */}
       <section className="bg-secondary text-primary min-h-[90vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <Image 
+         <Image 
             src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=2000"
             alt="Hero background"
             fill
             priority
+            sizes="100vw"
             className="object-cover opacity-40"
         />
         <div className="relative z-10 max-w-4xl mx-auto">
@@ -48,13 +49,14 @@ export default async function Home() {
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {collections.map(collection => (
               <Link key={collection.id} href={`/shop?collection=${collection.handle}`} className="group block relative aspect-[4/5] overflow-hidden">
-                 <Image 
-                   src={collection.image} 
-                   alt={collection.title} 
-                   fill 
-                   className="object-cover group-hover:scale-105 transition-transform duration-700"
-                 />
-                 <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+                  <Image 
+                    src={collection.image} 
+                    alt={collection.title} 
+                    fill 
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
                  <div className="absolute bottom-0 left-0 p-8 text-white">
                     <h3 className="text-2xl font-bold mb-2">{collection.title}</h3>
                     <p className="text-gray-200 text-sm hidden group-hover:block transition-all animate-in fade-in slide-in-from-bottom-2">{collection.description}</p>
@@ -121,13 +123,14 @@ export default async function Home() {
       {/* Promo Section */}
       <section className="py-24 px-4">
         <div className="max-w-7xl mx-auto bg-black text-white rounded-2xl overflow-hidden relative">
-           <Image 
-              src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=2000"
-              alt="Promo background"
-              fill
-              className="object-cover opacity-50 mix-blend-overlay"
-              loading="lazy"
-           />
+            <Image 
+               src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=80&w=2000"
+               alt="Promo background"
+               fill
+               className="object-cover opacity-50 mix-blend-overlay"
+               loading="lazy"
+               sizes="(max-width: 1280px) 100vw, 1280px"
+            />
            <div className="relative z-10 py-32 px-8 text-center">
               <span className="text-accent font-bold tracking-widest uppercase mb-4 block">Limited Time</span>
               <h2 className="text-5xl md:text-7xl font-black mb-8">END OF SEASON SALE</h2>
