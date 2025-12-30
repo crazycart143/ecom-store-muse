@@ -21,7 +21,10 @@ const nextConfig: NextConfig = {
         hostname: "api.escuelajs.co",
       },
       {
-        // ✅ ADD THIS
+        protocol: "https",
+        hostname: "cdn.dummyjson.com",
+      },
+      {
         protocol: "https",
         hostname: "fakestoreapi.com",
       },

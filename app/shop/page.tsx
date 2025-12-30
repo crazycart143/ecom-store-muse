@@ -8,15 +8,25 @@ import { QuickViewModal } from "@/components/QuickViewModal";
 import { useSearchParams } from "next/navigation";
 
 /* ----------------------------------------
-   Categories (Fake Store aligned)
+   Categories (DummyJSON aligned)
 ---------------------------------------- */
-const CATEGORIES = ["All", "Men", "Women", "Electronics", "Jewelry"];
+const CATEGORIES = ["All", "Men", "Women", "Shoes", "Electronics", "Jewelry"];
 
-const CATEGORY_MAP: Record<string, string> = {
-  Men: "men's clothing",
-  Women: "women's clothing",
-  Electronics: "electronics",
-  Jewelry: "jewelery",
+const CATEGORY_MATCHERS: Record<string, (category: string) => boolean> = {
+  Men: (c) =>
+    c.startsWith("mens-") && !c.includes("shoes"),
+
+  Women: (c) =>
+    c.startsWith("womens-") && !c.includes("shoes"),
+
+  Shoes: (c) =>
+    c === "mens-shoes" || c === "womens-shoes",
+
+  Electronics: (c) =>
+    ["smartphones", "laptops"].includes(c),
+
+  Jewelry: (c) =>
+    c.includes("jewellery") || c.includes("jewelry"),
 };
 
 const SORT_OPTIONS = [
@@ -62,16 +72,17 @@ function ShopContent() {
   }, []);
 
   /* ----------------------------------------
-     Filters + Sort
+     Filters + Sort (WORKING)
   ---------------------------------------- */
   const filteredProducts = useMemo(() => {
     let result = [...allProducts];
 
     // Category filter
-    if (activeCategory !== "All" && CATEGORY_MAP[activeCategory]) {
-      result = result.filter(
-        (p) => p.category === CATEGORY_MAP[activeCategory]
-      );
+    if (activeCategory !== "All") {
+      const matcher = CATEGORY_MATCHERS[activeCategory];
+      if (matcher) {
+        result = result.filter((p) => matcher(p.category));
+      }
     }
 
     // Price filter
@@ -87,11 +98,11 @@ function ShopContent() {
 
     // Sort
     if (sortValue === "price_asc") {
-      result.sort((a, b) => a.price - b.price);
+      result = [...result].sort((a, b) => a.price - b.price);
     } else if (sortValue === "price_desc") {
-      result.sort((a, b) => b.price - a.price);
+      result = [...result].sort((a, b) => b.price - a.price);
     } else {
-      result.reverse(); // newest proxy
+      result = [...result].reverse(); // newest proxy
     }
 
     return result;
